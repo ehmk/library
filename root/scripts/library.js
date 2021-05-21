@@ -9,13 +9,13 @@ let formAuthor = document.getElementById('form-author');
 let formPages = document.getElementById('form-pages');
 let formRead = document.getElementById('form-read');
 let formNotRead = document.getElementById('form-unread');
+let bookCards = document.getElementsByClassName('book-card');
 let myLibrary = [];
 
 addBookToLibrary('Harry Potter and the Sorcerer\'s Stone', 'JK Rowling', 500, false);
 addBookToLibrary('The Hobbit', 'JRR Tolkien', 500, false);
 addBookToLibrary('Game of Thrones: A Song of Fire and Ice', 'George RR Martin', 1000, false);
 generateCardList(myLibrary);
-
 function Book(title, author, pages, read) {
   this.title = title;
   this.author = author;
@@ -46,14 +46,21 @@ function generateBookCard(book) {
 
   let read = document.createElement('p');
   read.textContent = `${book.read ? 'Read: Yes' : 'Read: No'}`
+  
   bookCard.appendChild(read);
-
+  
   bookList.appendChild(bookCard);
 }
 
 function generateCardList(bookList) {
   for (let i = 0; i < bookList.length; i++) {
     generateBookCard(bookList[i]);
+  }
+}
+
+function setIndex(array) {
+  for (let i = 0; i < array.length; i++) {
+    array[i].setAttribute('data-index', i);
   }
 }
 
@@ -93,8 +100,15 @@ function submitForm() {
     return;
   }
   addBookToLibrary(formTitle.value, formAuthor.value, formPages.value, read);
+  resetForm();
   removeAllCards();
   generateCardList(myLibrary);
+}
+
+function resetForm() {
+  formTitle.value = '';
+  formAuthor.value = '';
+  formPages.value = '';
 }
 
 addBookButton.addEventListener('click', () => {
