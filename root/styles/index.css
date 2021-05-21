@@ -1,5 +1,29 @@
 body {
-  background-color: rgb(41, 41, 41);
-  color: white;
+  background-color: rgb(19, 19, 19);
+  color: rgb(116, 116, 116);
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#book-list-container {
+  display: grid;
+}
+
+#book-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.book-card {
+  border-style: solid;
+  border-color: rgb(88, 88, 88);
+  padding: 20px;
+  flex-basis: 30%;
+  margin: 10px;
+  border-radius: 15px;
+}
+
+.book-card > h3 {
+  color: rgb(142, 142, 236);
 }
