@@ -20,10 +20,10 @@ submitBookButton.addEventListener('click', () => {
 });
 
 const db = firebase.firestore();
-db.settings({timestampsInSnapshops: true});
+db.settings({timestampsInSnapshots: true});
 
 function addBooksFromDb(doc) {
-  addBookToLibrary(doc.data().title, doc.data().author, doc.data().pages, doc.data().read);
+  addBookToLibrary(doc.data().title, doc.data().author, doc.data().pages, doc.data().read, doc.id);
   reloadCardList(myLibrary);
 }
 
@@ -47,23 +47,33 @@ function submitForm() {
     alert('Please fill out all fields before submitting.');
     return;
   }
-  // addBookToLibrary(formTitle.value, formAuthor.value, formPages.value, read);
   db.collection('books').add({
     title: formTitle.value,
     author: formAuthor.value,
     pages: formPages.value,
-    read: read
+    read: read,
   });
   resetForm();
   removeAllCards();
   generateCardList(myLibrary);
 }
 
-function Book(title, author, pages, read) {
+// Deleting data 
+
+function removeBook(bookId) {
+  // let index = bookCards[i].getAttribute('data-index');
+  // myLibrary.splice(i, 1);
+  db.collection('books').doc(bookId).delete();
+  reloadCardList(myLibrary);
+}
+
+
+function Book(title, author, pages, read, dataId) {
   this.title = title;
   this.author = author;
   this.pages = pages;
   this.read = read;
+  this.dataId = dataId;
 }
 
 Book.prototype.toggleReadStatus = function() {
@@ -74,8 +84,8 @@ Book.prototype.toggleReadStatus = function() {
   }
 }
 
-function addBookToLibrary(title, author, pages, read) {
-  let newBook = new Book(title, author, pages, read);
+function addBookToLibrary(title, author, pages, read, dataId) {
+  let newBook = new Book(title, author, pages, read, dataId);
   myLibrary.push(newBook);
 }
 
@@ -166,8 +176,9 @@ function resetForm() {
 
 function addRemoveBookEvents() {
   for (let i = 0; i < removeBookButton.length; i++) {
-    removeBookButton[i].addEventListener('click', () => {
-      removeBook(i);
+    removeBookButton[i].addEventListener('click', (e) => {
+      e.stopPropagation();
+      removeBook(myLibrary[i].dataId);
     });
   }
 }
@@ -182,11 +193,7 @@ function addToggleReadStatusEvents() {
   }
 }
 
-function removeBook(i) {
-  let index = bookCards[i].getAttribute('data-index');
-  myLibrary.splice(i, 1);
-  reloadCardList(myLibrary);
-}
+
 
 
 
