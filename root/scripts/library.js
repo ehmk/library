@@ -10,6 +10,7 @@ let formPages = document.getElementById('form-pages');
 let formRead = document.getElementById('form-read');
 let formNotRead = document.getElementById('form-unread');
 let bookCards = document.getElementsByClassName('book-card');
+let removeBookButton = document.getElementsByClassName('remove-book-button');
 let myLibrary = [];
 
 addBookToLibrary('Harry Potter and the Sorcerer\'s Stone', 'JK Rowling', 500, false);
@@ -46,8 +47,9 @@ function generateBookCard(book) {
 
   let read = document.createElement('p');
   read.textContent = `${book.read ? 'Read: Yes' : 'Read: No'}`
-  
   bookCard.appendChild(read);
+
+  generateRemoveBookButton(bookCard);
   
   bookList.appendChild(bookCard);
 }
@@ -56,6 +58,15 @@ function generateCardList(bookList) {
   for (let i = 0; i < bookList.length; i++) {
     generateBookCard(bookList[i]);
   }
+  setIndex(bookCards);
+  addRemoveBookEvents();
+}
+
+function generateRemoveBookButton(bookCard) {
+  let removeButton = document.createElement('button');
+  removeButton.textContent = 'Remove Book';
+  removeButton.classList.add('remove-book-button');
+  bookCard.appendChild(removeButton);
 }
 
 function setIndex(array) {
@@ -81,7 +92,7 @@ function togglePopOutForm() {
     addBookButton.textContent = 'Close form';
   } else if (popOutForm.style.display === 'block') {
     popOutForm.style.display = 'none';
-    addBookButton.textContent = 'Add Book';
+    addBookButton.textContent = 'New Book';
   } else if (popOutForm.style.display === 'none') {
     popOutForm.style.display = 'block';
     addBookButton.textContent = 'Close Form';
@@ -117,6 +128,20 @@ addBookButton.addEventListener('click', () => {
 submitBookButton.addEventListener('click', () => {
   submitForm();
 });
+
+function addRemoveBookEvents() {
+  for (let i = 0; i < removeBookButton.length; i++) {
+    removeBookButton[i].addEventListener('click', () => {
+      removeBook(i);
+    });
+  }
+}
+
+function removeBook(i) {
+  let index = bookCards[i].getAttribute('data-index');
+  myLibrary.splice(i, 1);
+  reloadCardList(myLibrary);
+}
 
 
 
