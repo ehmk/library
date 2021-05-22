@@ -1,24 +1,3 @@
-const firebaseConfig = {
-  apiKey: "AIzaSyDh-LGA6CgwHWmzkwMrbMEx2Bi72zrYRvY",
-  authDomain: "library-e5118.firebaseapp.com",
-  databaseURL: "https://library-e5118-default-rtdb.firebaseio.com",
-  projectId: "library-e5118",
-  storageBucket: "library-e5118.appspot.com",
-  messagingSenderId: "633494256852",
-  appId: "1:633494256852:web:e0c11dcb18bf43ffe90f41"
-};
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-
-const database = firebase.database();
-
-function storeBooksData() {
-  database.ref(myLibrary).set(myLibrary); 
-}
-
-
-
-
 const bookList = document.getElementById('book-list');
 const popOutForm = document.getElementById('popout-form');
 const addBookButton = document.getElementById('add-book');
@@ -40,12 +19,45 @@ submitBookButton.addEventListener('click', () => {
   submitForm();
 });
 
-addBookToLibrary('Harry Potter and the Sorcerer\'s Stone', 'JK Rowling', 500, false);
-addBookToLibrary('The Hobbit', 'JRR Tolkien', 500, false);
-addBookToLibrary('Game of Thrones: A Song of Fire and Ice', 'George RR Martin', 1000, false);
-generateCardList(myLibrary);
+const db = firebase.firestore();
+db.settings({timestampsInSnapshops: true});
 
+function addBooksFromDb(doc) {
+  addBookToLibrary(doc.data().title, doc.data().author, doc.data().pages, doc.data().read);
+  reloadCardList(myLibrary);
+}
 
+// Get data
+db.collection('books').get().then((snapshot) => {
+  snapshot.docs.forEach(doc => {
+    addBooksFromDb(doc);
+  });
+});
+
+// Saving data
+
+function submitForm() {
+  let read;
+  if (formRead.checked) {
+    read = true;
+  } else {
+    read = false;
+  }
+  if (formTitle.value === '' || formAuthor.value === '' || formPages.value === '') {
+    alert('Please fill out all fields before submitting.');
+    return;
+  }
+  // addBookToLibrary(formTitle.value, formAuthor.value, formPages.value, read);
+  db.collection('books').add({
+    title: formTitle.value,
+    author: formAuthor.value,
+    pages: formPages.value,
+    read: read
+  });
+  resetForm();
+  removeAllCards();
+  generateCardList(myLibrary);
+}
 
 function Book(title, author, pages, read) {
   this.title = title;
@@ -144,23 +156,6 @@ function togglePopOutForm() {
     popOutForm.style.display = 'block';
     addBookButton.textContent = 'Close Form';
   }
-}
-
-function submitForm() {
-  let read;
-  if (formRead.checked) {
-    read = true;
-  } else {
-    read = false;
-  }
-  if (formTitle.value === '' || formAuthor.value === '' || formPages.value === '') {
-    alert('Please fill out all fields before submitting.');
-    return;
-  }
-  addBookToLibrary(formTitle.value, formAuthor.value, formPages.value, read);
-  resetForm();
-  removeAllCards();
-  generateCardList(myLibrary);
 }
 
 function resetForm() {
