@@ -1,4 +1,23 @@
-// 4
+const firebaseConfig = {
+  apiKey: "AIzaSyDh-LGA6CgwHWmzkwMrbMEx2Bi72zrYRvY",
+  authDomain: "library-e5118.firebaseapp.com",
+  databaseURL: "https://library-e5118-default-rtdb.firebaseio.com",
+  projectId: "library-e5118",
+  storageBucket: "library-e5118.appspot.com",
+  messagingSenderId: "633494256852",
+  appId: "1:633494256852:web:e0c11dcb18bf43ffe90f41"
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+const database = firebase.database();
+
+function storeBooksData() {
+  database.ref(myLibrary).set(myLibrary); 
+}
+
+
+
 
 const bookList = document.getElementById('book-list');
 const popOutForm = document.getElementById('popout-form');
@@ -11,17 +30,36 @@ let formRead = document.getElementById('form-read');
 let formNotRead = document.getElementById('form-unread');
 let bookCards = document.getElementsByClassName('book-card');
 let removeBookButton = document.getElementsByClassName('remove-book-button');
+let toggleReadButton = document.getElementsByClassName('read-status-button');
 let myLibrary = [];
+
+addBookButton.addEventListener('click', () => {
+  togglePopOutForm();
+});
+submitBookButton.addEventListener('click', () => {
+  submitForm();
+});
 
 addBookToLibrary('Harry Potter and the Sorcerer\'s Stone', 'JK Rowling', 500, false);
 addBookToLibrary('The Hobbit', 'JRR Tolkien', 500, false);
 addBookToLibrary('Game of Thrones: A Song of Fire and Ice', 'George RR Martin', 1000, false);
 generateCardList(myLibrary);
+
+
+
 function Book(title, author, pages, read) {
   this.title = title;
   this.author = author;
   this.pages = pages;
   this.read = read;
+}
+
+Book.prototype.toggleReadStatus = function() {
+  if (this.read === true) {
+    this.read = false;
+  } else if (this.read === false){
+    this.read = true;
+  }
 }
 
 function addBookToLibrary(title, author, pages, read) {
@@ -50,6 +88,7 @@ function generateBookCard(book) {
   bookCard.appendChild(read);
 
   generateRemoveBookButton(bookCard);
+  generateReadStatusButton(bookCard);
   
   bookList.appendChild(bookCard);
 }
@@ -60,6 +99,7 @@ function generateCardList(bookList) {
   }
   setIndex(bookCards);
   addRemoveBookEvents();
+  addToggleReadStatusEvents();
 }
 
 function generateRemoveBookButton(bookCard) {
@@ -67,6 +107,13 @@ function generateRemoveBookButton(bookCard) {
   removeButton.textContent = 'Remove Book';
   removeButton.classList.add('remove-book-button');
   bookCard.appendChild(removeButton);
+}
+
+function generateReadStatusButton(bookCard) {
+  let readStatusButton = document.createElement('button');
+  readStatusButton.textContent = 'Toggle read status';
+  readStatusButton.classList.add('read-status-button');
+  bookCard.appendChild(readStatusButton);
 }
 
 function setIndex(array) {
@@ -122,17 +169,20 @@ function resetForm() {
   formPages.value = '';
 }
 
-addBookButton.addEventListener('click', () => {
-  togglePopOutForm();
-});
-submitBookButton.addEventListener('click', () => {
-  submitForm();
-});
-
 function addRemoveBookEvents() {
   for (let i = 0; i < removeBookButton.length; i++) {
     removeBookButton[i].addEventListener('click', () => {
       removeBook(i);
+    });
+  }
+}
+
+function addToggleReadStatusEvents() {
+  for (let i = 0; i < toggleReadButton.length; i++) {
+    toggleReadButton[i].addEventListener('click', () => {
+      let index = bookCards[i].getAttribute('data-index');
+      myLibrary[i].toggleReadStatus();
+      reloadCardList(myLibrary);
     });
   }
 }
