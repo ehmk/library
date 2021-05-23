@@ -6,7 +6,6 @@ const firebaseConfig = {
   messagingSenderId: "1062317287780",
   appId: "1:1062317287780:web:633e2e52a6c6ab7587b271"
 };
-
 firebase.initializeApp(firebaseConfig);
 
 const bookList = document.getElementById('book-list');
@@ -52,7 +51,6 @@ db.collection('books').orderBy('title').onSnapshot(snapshot => {
 });
 
 // Saving data
-
 function submitForm() {
   let read;
   if (formRead.checked) {
@@ -74,7 +72,6 @@ function submitForm() {
 }
 
 // Deleting data 
-
 function removeBook(bookId) {
   for (let i = 0; i < myLibrary.length; i++) {
     if (myLibrary[i].dataId === bookId) {
@@ -206,15 +203,6 @@ function resetForm() {
   formPages.value = '';
 }
 
-// function addToggleReadStatusEvents() {
-//   for (let i = 0; i < toggleReadButton.length; i++) {
-//     toggleReadButton[i].addEventListener('click', () => {
-//       let index = bookCards[i].getAttribute('data-index');
-//       myLibrary[i].toggleReadStatus();
-//       reloadCardList(myLibrary);
-//     });
-//   }
-// }
 
 
 
