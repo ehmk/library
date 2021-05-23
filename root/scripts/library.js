@@ -152,6 +152,17 @@ function generateReadStatusButton(bookCard) {
   readStatusButton.textContent = 'Toggle read status';
   readStatusButton.classList.add('read-status-button');
   bookCard.appendChild(readStatusButton);
+
+  readStatusButton.addEventListener('click', () => {
+    let index = readStatusButton.parentElement.getAttribute('data-index');
+    console.log(index);
+    for (let i = 0; i < myLibrary.length; i++) {
+      if (index === myLibrary[i].dataId) {
+        myLibrary[i].toggleReadStatus();
+      }
+    }
+    reloadCardList(myLibrary);
+  });
 }
 
 function removeAllCards() {
@@ -184,15 +195,15 @@ function resetForm() {
   formPages.value = '';
 }
 
-function addToggleReadStatusEvents() {
-  for (let i = 0; i < toggleReadButton.length; i++) {
-    toggleReadButton[i].addEventListener('click', () => {
-      let index = bookCards[i].getAttribute('data-index');
-      myLibrary[i].toggleReadStatus();
-      reloadCardList(myLibrary);
-    });
-  }
-}
+// function addToggleReadStatusEvents() {
+//   for (let i = 0; i < toggleReadButton.length; i++) {
+//     toggleReadButton[i].addEventListener('click', () => {
+//       let index = bookCards[i].getAttribute('data-index');
+//       myLibrary[i].toggleReadStatus();
+//       reloadCardList(myLibrary);
+//     });
+//   }
+// }
 
 
 
