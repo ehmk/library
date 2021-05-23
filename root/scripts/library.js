@@ -27,22 +27,15 @@ function addBooksFromDb(doc) {
   reloadCardList(myLibrary);
 }
 
-// Get data
-// db.collection('books').orderBy('title').get().then((snapshot) => {
-//   snapshot.docs.forEach(doc => {
-//     addBooksFromDb(doc);
-//   });
-// });
-
 // Real-time Listener
 db.collection('books').orderBy('title').onSnapshot(snapshot => {
   let changes = snapshot.docChanges();
   changes.forEach(change => {
-    if(change.type === 'added') {
+    if(change.type == 'added') {
       addBooksFromDb(change.doc);
-    } else if (change.type === 'removed') {
-      let bookCard = bookList.querySelector('[data-index=' + change.doc.id + ']');
-      bookList.removeChild(bookCard);
+    } else if (change.type == 'removed') {
+      let card = document.querySelector(`[data-index='${change.doc.id}']`);
+      bookList.removeChild(card);
     }
   });
 });
@@ -67,8 +60,6 @@ function submitForm() {
     read: read,
   });
   resetForm();
-  removeAllCards();
-  generateCardList(myLibrary);
 }
 
 // Deleting data 
@@ -79,6 +70,7 @@ function removeBook(bookId) {
       myLibrary.splice(i, 1);
     }
   }
+  console.log('Removing: ' + bookId);
   db.collection('books').doc(bookId).delete();
 }
 
@@ -142,16 +134,14 @@ function generateCardList(bookList) {
   for (let i = 0; i < bookList.length; i++) {
     generateBookCard(bookList[i]);
   }
-  addRemoveBookEvents();
-  addToggleReadStatusEvents();
-}
-
-function addIdAttribute() {
-
 }
 
 function generateRemoveBookButton(bookCard) {
   let removeButton = document.createElement('button');
+  removeButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    removeBook(removeButton.parentElement.getAttribute('data-index'));
+  });
   removeButton.textContent = 'Remove Book';
   removeButton.classList.add('remove-book-button');
   bookCard.appendChild(removeButton);
@@ -192,15 +182,6 @@ function resetForm() {
   formTitle.value = '';
   formAuthor.value = '';
   formPages.value = '';
-}
-
-function addRemoveBookEvents() {
-  for (let i = 0; i < removeBookButton.length; i++) {
-    removeBookButton[i].addEventListener('click', (e) => {
-      e.stopPropagation();
-      removeBook(myLibrary[i].dataId);
-    });
-  }
 }
 
 function addToggleReadStatusEvents() {
