@@ -1,3 +1,14 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyCeuhJPqxiDkrsqTCCRSZ4ZK77h5UAWG5U",
+  authDomain: "library-91ceb.firebaseapp.com",
+  projectId: "library-91ceb",
+  storageBucket: "library-91ceb.appspot.com",
+  messagingSenderId: "1062317287780",
+  appId: "1:1062317287780:web:633e2e52a6c6ab7587b271"
+};
+
+firebase.initializeApp(firebaseConfig);
+
 const bookList = document.getElementById('book-list');
 const popOutForm = document.getElementById('popout-form');
 const addBookButton = document.getElementById('add-book');
