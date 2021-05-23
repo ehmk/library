@@ -28,9 +28,22 @@ function addBooksFromDb(doc) {
 }
 
 // Get data
-db.collection('books').get().then((snapshot) => {
-  snapshot.docs.forEach(doc => {
-    addBooksFromDb(doc);
+// db.collection('books').orderBy('title').get().then((snapshot) => {
+//   snapshot.docs.forEach(doc => {
+//     addBooksFromDb(doc);
+//   });
+// });
+
+// Real-time Listener
+db.collection('books').orderBy('title').onSnapshot(snapshot => {
+  let changes = snapshot.docChanges();
+  changes.forEach(change => {
+    if(change.type === 'added') {
+      addBooksFromDb(change.doc);
+    } else if (change.type === 'removed') {
+      let bookCard = bookList.querySelector('[data-index=' + change.doc.id + ']');
+      bookList.removeChild(bookCard);
+    }
   });
 });
 
@@ -61,10 +74,12 @@ function submitForm() {
 // Deleting data 
 
 function removeBook(bookId) {
-  // let index = bookCards[i].getAttribute('data-index');
-  // myLibrary.splice(i, 1);
+  for (let i = 0; i < myLibrary.length; i++) {
+    if (myLibrary[i].dataId === bookId) {
+      myLibrary.splice(i, 1);
+    }
+  }
   db.collection('books').doc(bookId).delete();
-  reloadCardList(myLibrary);
 }
 
 
@@ -79,8 +94,14 @@ function Book(title, author, pages, read, dataId) {
 Book.prototype.toggleReadStatus = function() {
   if (this.read === true) {
     this.read = false;
+    db.collection('books').doc(this.dataId).update({
+      read: false
+    });
   } else if (this.read === false){
     this.read = true;
+    db.collection('books').doc(this.dataId).update({
+      read: true
+    });
   }
 }
 
@@ -109,6 +130,8 @@ function generateBookCard(book) {
   read.textContent = `${book.read ? 'Read: Yes' : 'Read: No'}`
   bookCard.appendChild(read);
 
+  bookCard.setAttribute('data-index', book.dataId);
+
   generateRemoveBookButton(bookCard);
   generateReadStatusButton(bookCard);
   
@@ -119,9 +142,12 @@ function generateCardList(bookList) {
   for (let i = 0; i < bookList.length; i++) {
     generateBookCard(bookList[i]);
   }
-  setIndex(bookCards);
   addRemoveBookEvents();
   addToggleReadStatusEvents();
+}
+
+function addIdAttribute() {
+
 }
 
 function generateRemoveBookButton(bookCard) {
@@ -136,12 +162,6 @@ function generateReadStatusButton(bookCard) {
   readStatusButton.textContent = 'Toggle read status';
   readStatusButton.classList.add('read-status-button');
   bookCard.appendChild(readStatusButton);
-}
-
-function setIndex(array) {
-  for (let i = 0; i < array.length; i++) {
-    array[i].setAttribute('data-index', i);
-  }
 }
 
 function removeAllCards() {
