@@ -82,13 +82,22 @@ function removeBook(bookId) {
   db.collection('books').doc(bookId).delete();
 }
 
+// function Book(title, author, pages, read, dataId) {
+//   this.title = title;
+//   this.author = author;
+//   this.pages = pages;
+//   this.read = read;
+//   this.dataId = dataId;
+// }
 
-function Book(title, author, pages, read, dataId) {
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.read = read;
-  this.dataId = dataId;
+class Book {
+  constructor(title, author, pages, read, dataId) {
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.read = read;
+    this.dataId = dataId;
+  }
 }
 
 Book.prototype.toggleReadStatus = function() {
