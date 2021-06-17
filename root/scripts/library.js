@@ -78,17 +78,8 @@ function removeBook(bookId) {
       myLibrary.splice(i, 1);
     }
   }
-  console.log('Removing: ' + bookId);
   db.collection('books').doc(bookId).delete();
 }
-
-// function Book(title, author, pages, read, dataId) {
-//   this.title = title;
-//   this.author = author;
-//   this.pages = pages;
-//   this.read = read;
-//   this.dataId = dataId;
-// }
 
 class Book {
   constructor(title, author, pages, read, dataId) {
@@ -172,7 +163,6 @@ function generateReadStatusButton(bookCard) {
 
   readStatusButton.addEventListener('click', () => {
     let index = readStatusButton.parentElement.getAttribute('data-index');
-    console.log(index);
     for (let i = 0; i < myLibrary.length; i++) {
       if (index === myLibrary[i].dataId) {
         myLibrary[i].toggleReadStatus();
